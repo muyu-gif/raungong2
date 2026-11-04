@@ -1,0 +1,314 @@
+/* Element Plus 主题覆盖：初音未来电子舞台 */
+
+:root {
+  --el-color-primary: #39c5bb;
+  --el-color-primary-light-3: #5edbd2;
+  --el-color-primary-light-5: #86e8e1;
+  --el-color-primary-light-7: #b3f3ee;
+  --el-color-primary-light-8: #ccf8f4;
+  --el-color-primary-light-9: #e6fcf9;
+  --el-color-primary-dark-2: #23a39a;
+
+  --el-text-color-primary: #e9fffc;
+  --el-text-color-regular: #b6dde0;
+  --el-text-color-secondary: #7fa4ae;
+  --el-text-color-placeholder: #587a84;
+  --el-text-color-disabled: #3f5a63;
+
+  --el-border-color: #173a44;
+  --el-border-color-light: #102a33;
+  --el-border-color-lighter: #0d232b;
+  --el-border-color-extra-light: #0a1b22;
+  --el-border-color-hover: #2b6570;
+
+  --el-bg-color: #071b23;
+  --el-bg-color-page: #040f15;
+  --el-bg-color-overlay: #071b23;
+  --el-fill-color-blank: #061821;
+  --el-fill-color: #061821;
+  --el-fill-color-light: #08202a;
+  --el-fill-color-lighter: #0a2530;
+  --el-fill-color-dark: #0b2a35;
+
+  --el-font-family: var(--font-sans);
+  --el-font-size-base: 13px;
+  --el-border-radius-base: 3px;
+  --el-border-radius-small: 2px;
+  --el-border-radius-round: 4px;
+
+  --el-box-shadow-light: 0 14px 34px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(57, 197, 187, 0.12);
+  --el-box-shadow: 0 22px 52px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(57, 197, 187, 0.16);
+  --el-box-shadow-dark: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(57, 197, 187, 0.2);
+
+  --el-datepicker-text-color: #e9fffc;
+  --el-datepicker-off-text-color: #3f5a63;
+  --el-datepicker-header-text-color: #b6dde0;
+  --el-datepicker-icon-color: #7fa4ae;
+  --el-datepicker-border-color: #173a44;
+  --el-datepicker-inner-border-color: #102a33;
+  --el-datepicker-inrange-bg-color: rgba(57, 197, 187, 0.16);
+  --el-datepicker-inrange-hover-bg-color: rgba(57, 197, 187, 0.24);
+  --el-datepicker-active-color: #39c5bb;
+  --el-datepicker-hover-text-color: #6ef7ea;
+}
+
+.el-popper.is-light {
+  border-color: var(--rule-strong);
+  border-radius: 4px;
+  background: var(--paper-0);
+  box-shadow: var(--shadow-soft);
+}
+
+.el-input__wrapper {
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px var(--rule-strong) inset;
+  background: rgba(4, 15, 21, 0.72);
+}
+
+.el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px rgba(110, 247, 234, 0.5) inset;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--cyan) inset, 0 0 16px rgba(57, 197, 187, 0.14);
+}
+
+.el-input__inner {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+/* 日期时间选择 */
+.el-date-editor.el-input,
+.el-date-editor.el-input__wrapper {
+  width: 100%;
+}
+
+.el-date-editor .el-input__wrapper {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 3px;
+}
+
+.el-date-editor .el-input__inner {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.el-date-editor .el-input__prefix {
+  color: var(--muted);
+}
+
+.paper-popper.el-popper {
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  background: var(--paper-0);
+  box-shadow: var(--shadow-pop);
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+.paper-popper .el-picker-panel {
+  border-radius: 4px;
+  background: var(--paper-0);
+  color: var(--ink);
+}
+
+.paper-popper .el-picker-panel__sidebar {
+  border-right: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.paper-popper .el-picker-panel__shortcut {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.paper-popper .el-picker-panel__shortcut:hover {
+  color: var(--cyan);
+}
+
+.paper-popper .el-date-picker__header-label {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.paper-popper .el-picker-panel__icon-btn {
+  color: var(--muted);
+}
+
+.paper-popper .el-date-table th {
+  border-bottom-color: var(--rule);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.paper-popper .el-date-table td.available:hover {
+  color: var(--cyan);
+}
+
+.paper-popper .el-date-table td.today .el-date-table-cell__text {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.paper-popper .el-date-table td.current:not(.disabled) .el-date-table-cell__text {
+  background: var(--accent);
+  color: #03151a;
+  font-weight: 700;
+}
+
+.paper-popper .el-time-panel {
+  border-color: var(--rule);
+  background: var(--paper-0);
+}
+
+.paper-popper .el-time-panel__footer {
+  border-top-color: var(--rule);
+}
+
+.paper-popper .el-time-spinner__item.active:not(.disabled) {
+  color: var(--cyan);
+}
+
+.paper-popper .el-button--text {
+  color: var(--cyan);
+}
+
+.paper-popper .el-button--text:hover {
+  color: var(--ink);
+}
+
+/* 消息提示 */
+.el-message {
+  top: 20px !important;
+  z-index: 3000;
+  min-width: auto;
+  padding: 11px 16px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  background: rgba(7, 27, 35, 0.96);
+  box-shadow: 0 0 26px rgba(57, 197, 187, 0.16), 0 18px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+.el-message .el-message__content {
+  color: var(--ink);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+}
+
+.el-message .el-message__icon,
+.el-message .el-message__closeBtn {
+  color: var(--cyan);
+}
+
+.el-message--success {
+  border-color: rgba(92, 225, 185, 0.4);
+}
+
+.el-message--success .el-message__icon {
+  color: var(--green);
+}
+
+.el-message--error {
+  border-color: rgba(255, 92, 122, 0.45);
+}
+
+.el-message--error .el-message__icon {
+  color: var(--danger);
+}
+
+.el-message--warning {
+  border-color: rgba(255, 200, 87, 0.4);
+}
+
+.el-message--warning .el-message__icon {
+  color: var(--amber);
+}
+
+/* 弹窗 */
+.el-overlay {
+  background: rgba(1, 8, 11, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.el-message-box.paper-dialog {
+  width: min(440px, calc(100vw - 40px));
+  padding: 26px 26px 20px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  background: var(--paper-0);
+  box-shadow: var(--shadow-pop);
+}
+
+.el-message-box.paper-dialog .el-message-box__header {
+  padding: 0 0 12px;
+}
+
+.el-message-box.paper-dialog .el-message-box__title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+.el-message-box.paper-dialog .el-message-box__content {
+  padding: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.el-message-box.paper-dialog .el-message-box__btns {
+  padding: 22px 0 0;
+  gap: 8px;
+}
+
+.el-message-box.paper-dialog .el-button {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 3px;
+  font-size: 12.5px;
+}
+
+.el-message-box.paper-dialog .el-button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #03151a;
+  font-weight: 700;
+}
+
+.el-message-box.paper-dialog .el-message-box__headerbtn {
+  top: 16px;
+  right: 14px;
+}
+
+/* 下拉 / 选择 */
+.el-select__wrapper {
+  min-height: 42px;
+  border-radius: 3px;
+  background: rgba(4, 15, 21, 0.72);
+  box-shadow: 0 0 0 1px var(--rule-strong) inset;
+}
+
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--cyan) inset;
+}
+
+.el-select-dropdown__item.is-selected {
+  color: var(--cyan);
+}
+
+.el-select-dropdown__item.is-hovering {
+  background: var(--accent-soft);
+}
+
+.el-popper__arrow::before {
+  border-color: var(--rule-strong) !important;
+  background: var(--paper-0) !important;
+}

@@ -1,0 +1,106 @@
+# {{ content["meta"]["title"] }}
+
+> 活动时间：{{ content["meta"]["starts_at"] }} · 地点：{{ content["meta"]["location"] }} · 预计 {{ content["meta"]["participants"] }} 人 · 预算 {{ "%.2f"|format(content["meta"]["budget_yuan"]) }} 元
+
+## 一、活动概述
+
+{{ content["plan"]["summary"] }}
+
+**活动背景：** {{ content["plan"]["background"] }}
+
+**活动目标：**
+
+{% for item in content["plan"]["objectives"] %}
+- {{ item }}
+{% endfor %}
+
+**活动亮点：**
+
+{% for item in content["plan"]["highlights"] %}
+- {{ item }}
+{% endfor %}
+
+**成功标准：**
+
+{% for item in content["plan"]["success_criteria"] %}
+- {{ item }}
+{% endfor %}
+
+## 二、活动流程
+
+| 时间 | 环节 | 内容 | 负责人 | 地点 |
+|---|---|---|---|---|
+{% for item in content["plan"]["rundown"] %}
+| {{ item["start_time"] }}-{{ item["end_time"] }} | {{ item["segment"] }} | {{ item["content"] }} | {{ item["owner"] }} | {{ item["location"] }} |
+{% endfor %}
+
+## 三、预算明细
+
+| 类别 | 项目 | 数量 | 单价（元） | 小计（元） |
+|---|---|---:|---:|---:|
+{% for item in content["plan"]["budget"]["items"] %}
+| {{ item["category"] }} | {{ item["name"] }} | {{ item["quantity"] }} | {{ "%.2f"|format(item["unit_price_yuan"]) }} | {{ "%.2f"|format(item["amount_yuan"]) }} |
+{% endfor %}
+| **合计** | | | | **{{ "%.2f"|format(content["plan"]["budget"]["planned_yuan"]) }}** |
+
+## 四、物资清单
+
+| 名称 | 规格 | 数量 | 单价（元） | 小计（元） | 采购渠道 | 负责人 | 到位时间 |
+|---|---|---:|---:|---:|---|---|---|
+{% for item in content["materials"]["items"] %}
+| {{ item["name"] }} | {{ item["spec"] }} | {{ item["quantity"] }} | {{ "%.2f"|format(item["unit_price_yuan"]) }} | {{ "%.2f"|format(item["subtotal_yuan"]) }} | {{ item["purchase_channel"] }} | {{ item["owner"] }} | {{ item["needed_by"] }} |
+{% endfor %}
+
+## 五、分工表
+
+| 任务 | 阶段 | 负责人 | 截止时间 | 优先级 | 验收标准 |
+|---|---|---|---|---|---|
+{% for item in content["tasks"]["items"] %}
+| {{ item["name"] }} | {{ item["phase"] }} | {{ item["owner"] }} | {{ item["due_at"] }} | {{ item["priority"] }} | {{ item["acceptance"] }} |
+{% endfor %}
+
+## 六、宣传文案
+
+**口号：** {{ content["promotion"]["slogan"] }}
+
+**推文标题：** {{ content["promotion"]["copy"]["title"] }}
+
+{{ content["promotion"]["copy"]["body"] }}
+
+**话题：** {% for tag in content["promotion"]["copy"]["hashtags"] %}{{ tag }} {% endfor %}
+
+**行动号召：** {{ content["promotion"]["copy"]["call_to_action"] }}
+
+### 发布渠道
+
+{% for item in content["promotion"]["channels"] %}
+- **{{ item["channel"] }}**（{{ item["publish_at"] }}，{{ item["owner"] }}）：{{ item["content"] }}
+{% endfor %}
+
+## 七、风险清单
+
+| 风险 | 等级 | 概率 | 预防措施 | 应急方案 | 负责人 |
+|---|---|---|---|---|---|
+{% for item in content["risks"]["items"] %}
+| {{ item["description"] }} | {{ item["level"] }} | {{ item["probability"] }} | {{ item["mitigation"] }} | {{ item["contingency"] }} | {{ item["owner"] }} |
+{% endfor %}
+
+## 八、复盘模板
+
+{{ content["review"]["template_markdown"] }}
+
+{% if content["assumptions"] %}
+## 九、假设
+
+{% for item in content["assumptions"] %}
+- {{ item }}
+{% endfor %}
+{% endif %}
+
+{% if content["warnings"] %}
+## 十、注意事项
+
+{% for item in content["warnings"] %}
+- {{ item }}
+{% endfor %}
+{% endif %}
