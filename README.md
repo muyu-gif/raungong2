@@ -1,182 +1,247 @@
-# 活动智囊 
+# 活动智囊 · 校园活动智能策划平台
 
-面向校园活动的智能策划工作台。填写主题、人数、预算与日期，自动生成包含策划、预算、物资、分工、宣传与风险的活动方案，并支持按节编辑、Markdown 导出与浏览器打印。
+面向校园活动的智能策划工作台。填写主题、人数、预算与日期后，自动生成包含策划案、预算、物资、分工、宣传、风险与复盘的完整活动方案，并支持按节编辑、复制、删除和 Markdown 导出。
 
-前端按《04-前端开发文档 v1.0》实现：接口路径、请求字段、错误格式均与文档一致；文档标注为「未实现」的接口没有任何调用入口。界面采用「初音未来 · 电子舞台」主题：深夜青绿、01 编号、双马尾角色、全息网格与霓虹渐变。
+## 项目组成
 
-![登录页](docs/screenshots/miku-login.jpg)
+- **前端**：Vue 3 + Vite + TypeScript + Pinia + Vue Router + Element Plus
+- **后端**：FastAPI + SQLAlchemy Async + SQLite / PostgreSQL
+- **智能体**：LangGraph 三节点工作流 + DeepSeek + BM25 RAG
+- **鉴权**：JWT
+- **导出**：Markdown（浏览器打印为 PDF）
+- **Mock**：前端 `devmock/`，无后端也能演示
 
-## 预览
+## 功能
 
-| 方案详情 | 预算 |
-| --- | --- |
-| ![方案详情](docs/screenshots/miku-detail.jpg) | ![预算](docs/screenshots/miku-budget.jpg) |
+- 注册、登录、JWT 鉴权
+- 活动枚举字典
+- 异步生成方案：202 + 任务轮询
+- 六大部分：策划案、物资、分工、宣传、风险、复盘
+- 按节编辑 + 乐观锁版本冲突
+- 方案列表、关键词搜索、分页
+- 复制方案、软删除方案
+- Markdown 导出
+- 智能体超时、重试 1 次、规则降级
+- LangGraph + DeepSeek + BM25 RAG 真实生成
 
-| 打印预览 | 移动端登录 |
-| --- | --- |
-| ![打印预览](docs/screenshots/miku-print.jpg) | <img src="docs/screenshots/miku-mobile-login.jpg" alt="移动端登录" width="280" /> |
+## 仓库结构
 
-## 技术栈
+```text
+.
+├── src/                         # Vue 前端
+├── devmock/                     # 前端 Mock 后端
+├── raungong-main/
+│   ├── backend/                 # FastAPI 后端
+│   │   ├── app/
+│   │   │   ├── agent/           # Mock / LangGraph / Dify 适配器
+│   │   │   ├── api/v1/          # 路由
+│   │   │   ├── services/        # 生成、校验、导出
+│   │   │   └── ...
+│   │   ├── knowledge/           # BM25 RAG 知识库
+│   │   ├── requirements.txt
+│   │   └── .env.example
+│   ├── docs/                    # 需求、后端、接口、前端文档
+│   ├── contracts/               # OpenAPI、JSON Schema、DDL
+│   └── examples/                # 标准示例数据
+└── README.md
+```
 
-- Vue 3.5 + Vite 6 + TypeScript
-- Pinia、Vue Router
-- Element Plus（日期选择、消息与确认框，样式已整体覆盖）
-- Axios
-- 设计：深空青 / 电子青绿、Bahnschrift + Noto Sans SC、网格舞台、切角卡片与 01 编号、响应式布局
+## 快速开始
 
-## 本地运行
+### 1. 启动后端
 
-需要 Node.js 20+ 与 pnpm。
+```powershell
+cd raungong-main/backend
+
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+Copy-Item .env.example .env
+```
+
+编辑 `.env`：
+
+```env
+AGENT_PROVIDER=langgraph
+
+LLM_BASE_URL=https://api.deepseek.com/v1
+LLM_API_KEY=sk-你的Key
+LLM_MODEL=deepseek-chat
+
+RAG_TOP_K=4
+RAG_KNOWLEDGE_DIR=./knowledge
+
+AGENT_TIMEOUT_SECONDS=120
+AGENT_MAX_RETRIES=1
+ENABLE_FALLBACK=true
+```
+
+启动：
+
+```powershell
+.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+- Swagger：<http://127.0.0.1:8000/docs>
+- 健康检查：<http://127.0.0.1:8000/healthz>
+
+看到：
+
+```json
+{
+  "agent": {
+    "provider": "langgraph",
+    "configured": true
+  }
+}
+```
+
+说明真实智能体已启用。
+
+### 2. 启动前端
+
+需要 Node.js 20+ 和 pnpm。
 
 ```bash
 pnpm install
-
-# 终端 1：本地 Mock 后端（http://127.0.0.1:8082）
-pnpm mock
-
-# 终端 2：前端开发服务（http://127.0.0.1:5173）
 pnpm dev
 ```
 
-打开 <http://127.0.0.1:5173>，注册任意账号即可体验完整流程：
+打开 <http://127.0.0.1:5173>。
 
-- 用户名：3～32 位字母、数字或下划线
-- 密码：8～64 位
+### 3. 使用 Mock 还是真实后端
 
-可选：向 Mock 写入一份演示数据（4 份不同主题的方案，账号 `demo_studio / demo12345`）：
-
-```bash
-node devmock/seed-demo.mjs
-```
-
-### 对接真实后端
-
-1. 停止 Mock，释放 `8082` 端口；
-2. 修改 `.env.development`：
-
-   ```text
-   VITE_API_BASE_URL=http://127.0.0.1:8082
-   ```
-
-3. 确保后端 CORS 允许 `http://localhost:5173` 与 `http://127.0.0.1:5173`；
-4. 重新启动 `pnpm dev`。
-
-生产构建：
+**只做前端演示，不接后端：**
 
 ```bash
-pnpm build          # 先执行 vue-tsc 类型检查，再输出 dist/
-pnpm preview        # 本地预览 dist/
+pnpm mock
+pnpm dev
 ```
 
-`.env.production` 中的 `VITE_API_BASE_URL` 需要替换为实际后端域名后再构建。
+默认 `.env.development`：
 
-部署时请把前端路由回退到 `index.html`（history 模式），并确保后端 CORS 允许实际前端域名。
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8082
+```
 
-## 页面与路由
+**联调真实后端：**
 
-| 路由 | 页面 | 说明 |
-| --- | --- | --- |
-| `/login` | 登录 / 注册 | 注册成功直接登录，登录状态保留 7 天 |
-| `/` | 方案档案 | 关键词搜索、分页、空状态与错误状态 |
-| `/plans/new` | 新建方案 | 完整表单校验、人均预算核对、幂等提交 |
-| `/plans/:id/generating` | 生成进度 | 1 秒轮询、阶段文案、失败/超时、刷新恢复 |
-| `/plans/:id` | 方案详情 | 10 个章节、按节编辑、版本冲突处理、导出 |
-| `/plans/:id/print` | 打印预览 | 全量只读文档，调用浏览器打印 |
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
 
-### 方案详情章节
+然后重启 `pnpm dev`。后端已允许 `localhost:5173` 和 `127.0.0.1:5173` 跨域。
 
-活动概览、筹备阶段、当晚流程、预算、物资、分工、宣传、风险、复盘、警告与假设。
-
-其中可编辑的章节：活动概览与预算（`plan`）、物资（`materials`）、分工（`tasks`）、宣传（`promotion`）、风险（`risks`）、复盘（`review`）。保存时提交整节数据，使用服务端返回的 `version` 与 `data` 更新本地状态。
-
-## 接口对齐说明
-
-| 接口 | 前端实现 |
-| --- | --- |
-| `GET /healthz` | 侧栏服务状态，60 秒检查一次 |
-| `POST /auth/register` | 注册后保存 token 与用户，直接进入工作台 |
-| `POST /auth/login` | 错误信息取自 `detail` |
-| `GET /auth/me` | 刷新页面时恢复用户，失败清除 token |
-| `POST /plans/generate` | 每次新提交生成 UUID 作为 `Idempotency-Key`；网络超时重试复用同一个 key |
-| `GET /tasks/{id}` | 1 秒轮询，最长 180 秒；阶段未知时显示「处理中」 |
-| `GET /plans` | 只发送 `page`、`page_size`、`keyword`，不发送状态/类型/排序参数 |
-| `GET /plans/{id}` | 展示四类状态；`content` 为空时进入等待/失败页面 |
-| `PATCH /plans/{id}/sections/{key}` | 整节提交，保存前由前端保证数字与数组类型；409 版本冲突后自动重载 |
-| `GET /plans/{id}/export` | `responseType: "blob"`，解析 `filename*` 下载；`inline` 未使用 |
-
-其他对齐细节：
-
-- **task_id 恢复**：生成任务 ID 存在 `sessionStorage`（`plan-task:{planId}`），刷新进度页可继续轮询。当前后端不返回 `latest_task`，若 ID 丢失，页面会先尝试读取方案详情，已生成则直接进入详情，否则给出重新填写的入口。
-- **活动类型中文**：本地枚举映射，不依赖 `content.meta.activity_type_label`。
-- **错误兼容**：同时处理 `detail` 为字符串、对象、422 数组三种格式；导出接口的错误体是 Blob，会先读为文本再解析。
-- **时间**：兼容 SQLite 返回的不带时区时间与 6 位微秒；按浏览器本地时间展示。
-- **金额**：统一两位小数；预算编辑仅在前端预览时计算，保存后使用服务端返回的 `items_total_yuan`、`planned_yuan` 与物资 `summary`。
-- **活动类型不发送 `template_id`**。
-- **401**：清除 token 并跳转登录页，登录后回到原页面。
-- **未实现的功能不出现入口**：删除、复制、版本历史、恢复版本、单节重新生成、模板、取消生成、服务端 PDF、归档。
-
-## 目录结构
+## 智能体实现
 
 ```text
-src/
-├── api/                # client、类型、认证、方案接口、错误处理
-├── components/
-│   ├── detail/         # 10 个方案章节组件
-│   ├── AppShell.vue    # 侧栏 / 移动端顶栏
-│   ├── AppIcon.vue
-│   ├── BrandMark.vue
-│   └── ...
-├── composables/        # 服务状态检查
-├── constants/          # 活动类型、状态、阶段等本地常量
-├── stores/auth.ts      # Pinia 认证状态
-├── styles/             # 设计变量、基础样式、Element Plus 覆盖、打印样式
-├── utils/              # 日期金额、错误、导出、Markdown、表单、会话
-├── views/              # 登录、列表、新建、生成、详情、打印
-├── router.ts
-└── main.ts
-devmock/                # 仅用于本地联调的 Mock 后端
-docs/screenshots/       # README 截图
+POST /api/v1/plans/generate
+  → 创建 plan + task
+  → 后台 run_generation()
+  → LangGraph 三节点
+      1. 策划案 + 预算
+      2. 物资 + 分工
+      3. 宣传 + 风险 + 复盘
+  → BM25 检索 knowledge/
+  → content_validator 校验 + 金额重算
+  → plan.ready
 ```
 
-## 脚本
+相关文件：
 
-| 命令 | 说明 |
-| --- | --- |
-| `pnpm dev` | 启动开发服务（5173） |
-| `pnpm build` | 类型检查并构建 |
-| `pnpm preview` | 预览构建产物（4173） |
-| `pnpm typecheck` | 仅执行 `vue-tsc` |
-| `pnpm mock` | 启动 Mock 后端（8082） |
-
-## 联调自检
-
-项目已在浏览器中逐项验证：
-
-- 注册、登录、刷新后通过 `/auth/me` 恢复用户；
-- 新建方案返回 202，进入进度页并轮询；
-- 生成页刷新后从 `sessionStorage` 恢复 task_id，继续轮询并自动进入详情；
-- 10 个章节均能渲染，含警告与假设；
-- 修改物资数量后，页面使用服务端返回的小计与汇总，版本号自增；
-- 修改预算预备金后，计划合计由服务端重算（2,808.00 + 500.00 = 3,308.00）；
-- 用旧 `version` 保存返回 409，弹出冲突提示并载入最新版本；
-- 导出 Markdown 文件名中文正常，内容含全部章节；
-- 打印预览覆盖全部章节，可用浏览器「另存为 PDF」；
-- 失效 token 自动跳转登录页；
-- 生成失败时展示错误码与可重试提示；
-- 移动端列表、表单、详情与堆叠表格均可用。
-
-可选的浏览器冒烟测试（需要 Python Playwright 与 Edge）：
-
-```bash
-python devmock/ui-check.py
+```text
+raungong-main/backend/app/agent/langgraph_agent.py
+raungong-main/backend/app/agent/rag.py
+raungong-main/backend/app/services/generation_service.py
+raungong-main/backend/app/services/content_validator.py
+raungong-main/backend/app/services/fallback.py
+raungong-main/backend/knowledge/campus_activity.md
 ```
 
-## 说明
+没有 API Key 时，`ENABLE_FALLBACK=true` 会使用规则模板降级，方案详情返回：
 
-- `devmock/` 是本地联调用的内存 Mock，重启即清空，不用于生产；它覆盖文档中的全部 10 个接口及三种错误格式。
-- 当前后端没有 PDF 接口，打印页使用浏览器打印能力；也没有刷新令牌接口，token 过期需重新登录。
-- 页面优先使用系统已安装的 Bahnschrift 与 Noto Sans SC，未安装时回退到系统无衬线字体。
+```json
+{
+  "degraded": true,
+  "content": {
+    "meta": {
+      "agent": {
+        "provider": "fallback"
+      }
+    }
+  }
+}
+```
 
-### 角色与素材
+## API 概览
 
-登录页、空状态与右下角使用的双马尾角色是项目内的原创 SVG 插画（[MikuMascot.vue](src/components/MikuMascot.vue)），以初音未来的青色双马尾、耳机和「01」编号作为同人风格装饰，不包含外部图片素材。初音未来及相关名称版权归 Crypton Future Media 所有，仅用于非商业演示。
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/healthz` | 健康检查 |
+| POST | `/api/v1/auth/register` | 注册 |
+| POST | `/api/v1/auth/login` | 登录 |
+| GET | `/api/v1/auth/me` | 当前用户 |
+| GET | `/api/v1/meta/enums` | 枚举字典 |
+| POST | `/api/v1/plans/generate` | 创建生成任务，202 |
+| GET | `/api/v1/tasks/{task_id}` | 轮询任务 |
+| GET | `/api/v1/plans` | 方案列表 |
+| GET | `/api/v1/plans/{plan_id}` | 方案详情 |
+| PATCH | `/api/v1/plans/{plan_id}/sections/{section_key}` | 按节编辑 |
+| POST | `/api/v1/plans/{plan_id}/duplicate` | 复制方案 |
+| DELETE | `/api/v1/plans/{plan_id}` | 删除方案 |
+| GET | `/api/v1/plans/{plan_id}/export` | 导出 Markdown |
+
+重复用户名返回：
+
+```json
+{
+  "detail": {
+    "code": "USERNAME_TAKEN",
+    "message": "用户名已存在"
+  }
+}
+```
+
+HTTP `409`。
+
+## 文档
+
+- `raungong-main/docs/01-需求分析.md`
+- `raungong-main/docs/02-后端开发文档.md`
+- `raungong-main/docs/03-接口规范.md`
+- `raungong-main/docs/04-前端开发文档.md`
+- `raungong-main/contracts/openapi.current.json`
+- `raungong-main/contracts/plan-content.schema.json`
+
+前端交付包：
+
+```text
+raungong-main/活动智囊-前端交付包.zip
+```
+
+## 测试状态
+
+- 43 项前端接口端到端检查通过
+- Mock 生成通过
+- Dify / Coze 适配器模拟 HTTP 测试通过
+- LangGraph 图结构测试通过
+- 真实 DeepSeek + LangGraph API 生成通过
+- 真实生成耗时约 48 秒
+- `degraded=false`，`provider=langgraph`
+- Markdown 导出 200
+
+## 已知限制
+
+- 版本历史 / 恢复未实现
+- 重新生成某一节未实现
+- 模板复用未实现
+- 服务端 PDF 未实现（前端用浏览器打印）
+- 正式 pytest 测试集未提交
+- Render / Supabase 部署未完成
+- 真实平台输出仍需按知识库和 schema 持续调优
+
+## 安全
+
+- `.env` 已被 `.gitignore` 忽略，不要提交 Key
+- `backend/data/`、`.venv/`、`node_modules/` 不提交
+- 前后端生产环境请配置实际域名和 CORS

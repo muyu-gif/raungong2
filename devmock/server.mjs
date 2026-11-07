@@ -371,7 +371,7 @@ async function handle(req, res) {
       errors.push(validationError(["display_name"], "String should have at least 1 and at most 50 characters", body.display_name));
     }
     if (errors.length) return json(res, 422, { detail: errors });
-    if (usernames.has(username)) return json(res, 409, { detail: "用户名已存在" });
+    if (usernames.has(username)) return json(res, 409, { detail: { code: "USERNAME_TAKEN", message: "用户名已存在" } });
 
     const id = crypto.randomUUID();
     const user = {

@@ -3,15 +3,32 @@
 > 配套文档：`docs/02-后端开发文档.md`、`docs/03-接口规范.md`  
 > 目标：先做出**可联调、可演示、可部署**的 P0 后端，再补 P1。不要一开始追求全部功能。
 
-## 1. 当前状态
+## 1. 当前状态（2026-11-03）
 
-- [x] 需求分析、后端开发文档、接口规范、OpenAPI、JSON Schema、数据库 DDL；
-- [x] “迎新晚会/100 人/2000 元”标准示例；
-- [ ] `backend/` 代码工程；
-- [ ] Mock 智能体与异步生成任务；
-- [ ] 真实扣子/Dify 联调；
-- [ ] 测试、Render + Supabase 部署；
-- [ ] GitHub 仓库与团队协作。
+**已完成并通过端到端测试：**
+
+- [x] FastAPI 骨架、配置、数据库连接、`/healthz`、`/docs`；
+- [x] `users` / `plans` / `generation_tasks` 表；
+- [x] 注册、登录、JWT、`/auth/me`；
+- [x] Mock 智能体、202 任务、轮询、方案详情；
+- [x] `AgentAdapter` + Mock/Dify/LangGraph 适配器、超时、重试 1 次、规则降级；
+- [x] LangGraph 三节点 + DeepSeek + BM25 RAG，真实 API 端到端生成通过；
+- [x] JSON 解析、内容结构校验、物资/预算金额重算；
+- [x] 方案列表、按节编辑、409 版本冲突；
+- [x] Markdown 导出；
+- [x] `/meta/enums` 枚举字典；
+- [x] 删除方案、复制方案、方案详情 `latest_task`；
+- [x] CORS 暴露 `Content-Disposition`。
+
+**还没完成：**
+
+- [ ] 版本历史/恢复、重新生成某一节、模板；
+- [ ] 服务端 PDF；
+- [ ] 正式 pytest 测试集；
+- [ ] Render + Supabase 部署；
+- [ ] 与 A 前端联调。
+
+前端现在可以按 `docs/04-前端开发文档.md` 开始开发，主流程不会被后端阻塞。
 
 ## 2. 今天先做的 5 件事（约 4 小时）
 

@@ -43,7 +43,10 @@ async def register(
     if exists:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="用户名已存在",
+            detail={
+                "code": "USERNAME_TAKEN",
+                "message": "用户名已存在",
+            },
         )
 
     user = User(
